@@ -1,14 +1,20 @@
+from tmdb_client import get_popular_movies, get_poster_url
 from flask import Flask, render_template
-from random import randint, randrange
 
 app = Flask(__name__)
 
 if __name__ == '__main__':
     app.run(debug=True)
 
+@app.context_processor
+def utility_processor():
+    def tmdb_image_url(path, size):
+        return get_poster_url(path, size)
+    return {"tmdb_image_url": tmdb_image_url}
+
 @app.route('/')
 def homepage():
-    movies = generate_movies()
+    movies = get_popular_movies()["results"][:8]
     return render_template("homepage.html", movies=movies)
 
 
@@ -34,3 +40,6 @@ def generate_movies():
 test = generate_movies()
 for i in test:
     print(i.tytul)
+
+
+testing_pop_movies = get_popular_movies
